@@ -8,7 +8,7 @@ The methodology presented aims to automate the generation of urban building ener
 
 ## System overview
 
-The system operates by interpreting a manifest (specification file) that outlines how GIS metadata fields correspond to energy modeling components. The manifest is divided into three primary sections:
+The system operates by interpreting a manifest (specification file) that outlines how GIS metadata fields correspond to energy modeling components. The manifest is defined in YAML to emphasize human readiability and accessible editing. The manifest is divided into three primary sections:
 
 1. **requires**: Specifies the required metadata fields, their data types, allowable ranges or enumerations, and default values. Can be used to validate compatibility with incoming GIS data.
 2. **computes**: Defines computed fields derived from existing metadata, allowing for grouping or breakpointing of data to create new variables which can be referenced in the component map.
