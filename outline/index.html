@@ -398,6 +398,7 @@
 <li>classic ubem papers</li>
 <li>existing templating efforts</li>
 <li>similar approaches which are not tied to real buildings: resstock - highly detailed, distributions, etc etc, but can't tell u what 123 Oak st's energy use is.</li>
+<li>lehong cisbat granularity paper</li>
 </ol>
 <h2 id="methodology">Methodology<a class="headerlink" href="#methodology" title="Permanent link">#</a></h2>
 <p>The core challenges which Semantic Stock Modeling aims to address include the modeling complexity encountered when trying to increase the granularity and/or scale of existing urban building energy modeling approaches, the incompatibility of existing approaches with uncertainty or incomplete data, the difficulty of fusing patchwork GIS datasets, and the disparate skillsets required to execute a large-scale analysis. The fundamental solution proposed here is to more explicitly isolate the high-level semantic descriptions of buildings from their interpretation and conversion into executable models.</p>
@@ -554,28 +555,16 @@
 </span></code></pre></div>
 <p><strong>TODO: update the above with actual values</strong></p>
 <p>While this is not a complete description of the building energy model used in the case study, it illustrates the conceptual utility of the SSM approach: the energy modeler only needs to define a few components, and then a ruleset for how those components should be selected, combined, or mutated when compiling the energy model for each building according to the semantic fields provided. As previously mentioned, the domain-specific language illustrated here is not meant to be a final standard, but rather, just one example of how this approach can be used to clearly communicate the connection between the different layers.</p>
-<p>This information in conjunction with the base datasets is sufficient to construct the EnergyPlus model for each building and execute the simulations as a massively parallel job in the cloud with thousands of compute nodes.</p>
-<p>__TODO: discuss</p>
+<p>This information in conjunction with the base datasets is sufficient to construct the EnergyPlus model for each building. To construct the energy models, a rotated rectangle is fit around the footprint of each building; if the width or depth of this rectangle exceeds 15m, a perimeter/core floorplate division into five zones is performed. The zones are then extruded to a floor-to-floor height of 3.5m and repeated according to the number of floors in the building. Ideal loads airsystems are used to generate annual thermal demands. These demands are converted to site energy use distributions according to probabilistic assumptions about system performances according to selected heating fuels. Similarly, assumptions are made for emissions intensities and energy prices reflecting the highly divergent cost of fuels in Massachusetts.</p>
+<p>Annual cost and carbon distributions due to a heat pump upgrade can then easily be modeled according to the difference between the relevant resulting distributions. These assumptions can be found in the table below. Two scenarios are explored: one in which no information is known about the initial heating fuel system, and another in which we assume we know the heating fuel system for each building; while that data was not readily available, is chosen to clearly illustrate the effect of increasing the semantic uncertainty about the building on analysis results.</p>
+<p>Each model is executed as part of a massively parallel scatter-gather job in the cloud with thousands of compute nodes, taking approximately 2 hours to complete all 2.3m simulations.</p>
+<p><strong>TODO: include assumptions table.</strong></p>
 <h3 id="results">Results<a class="headerlink" href="#results" title="Permanent link">#</a></h3>
-<ol>
-<li>
-<p>unknowns</p>
-</li>
-<li>
-<p>heating system</p>
-</li>
-<li>basement status</li>
-<li>
-<p>attic status</p>
-</li>
-<li>
-<p>assumptions</p>
-</li>
-<li>predictions with fuel assignment unknown</li>
-<li>predictictions with fuel assignment unknown</li>
-<li>ingest data from individual homeowners</li>
-<li>total compute time, electricity, carbon?</li>
-</ol>
+<p>When the initial heating fuel source is not known for any particular building, we assume equal probabilities that it is a natural gas system or a delievered oil system. As a result, we see a highly bimodal annual cost distribution for each building, with mean and median values barely positive, but massive uncertainty in whether the actual value will be a net cost reduction or increase in the annual utility expenditure by the homeowner depending on the original fuel source.</p>
+<p>[figure]</p>
+<p>To illustrate the effect of increasing the semantic certainty, we assume buildings in western Massachusetts are largely consuming delivered fuel while buildings in eastern Massachusetts are largely consuming natural gas. After doing so and re-running model the postprocessing with the cached thermal demand results, the distribution for each building's change in annual utility bill naturally collapses into a much more compact unimodal form, illustrating the clear economic incentive for oil-based homes to upgrade to a heat-pump and the clear economic disincentive to upgrade for typical natural gas furnace homes.</p>
+<p>[figure]</p>
+<p>This analysis can now naturally be paired with retrofit installation cost models (cite) homeowner willingness-to-pay models (cite), census data, and incentive equity and adoption models to evaluate the efficacy of policy decisions at the state-scale.</p>
 <h2 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link">#</a></h2>
 <ol>
 <li>Future work</li>
