@@ -32,6 +32,7 @@ In proposing Semantic Stock Modeling, our goal is not to immediately define a co
 1. classic ubem papers
 1. existing templating efforts
 1. similar approaches which are not tied to real buildings: resstock - highly detailed, distributions, etc etc, but can't tell u what 123 Oak st's energy use is.
+1. lehong cisbat granularity paper
 
 ## Methodology
 
@@ -206,23 +207,25 @@ component-map:
 
 While this is not a complete description of the building energy model used in the case study, it illustrates the conceptual utility of the SSM approach: the energy modeler only needs to define a few components, and then a ruleset for how those components should be selected, combined, or mutated when compiling the energy model for each building according to the semantic fields provided. As previously mentioned, the domain-specific language illustrated here is not meant to be a final standard, but rather, just one example of how this approach can be used to clearly communicate the connection between the different layers.
 
-This information in conjunction with the base datasets is sufficient to construct the EnergyPlus model for each building and execute the simulations as a massively parallel job in the cloud with thousands of compute nodes.
+This information in conjunction with the base datasets is sufficient to construct the EnergyPlus model for each building. To construct the energy models, a rotated rectangle is fit around the footprint of each building; if the width or depth of this rectangle exceeds 15m, a perimeter/core floorplate division into five zones is performed. The zones are then extruded to a floor-to-floor height of 3.5m and repeated according to the number of floors in the building. Ideal loads airsystems are used to generate annual thermal demands. These demands are converted to site energy use distributions according to probabilistic assumptions about system performances according to selected heating fuels. Similarly, assumptions are made for emissions intensities and energy prices reflecting the highly divergent cost of fuels in Massachusetts.
 
-\_\_TODO: discuss
+Annual cost and carbon distributions due to a heat pump upgrade can then easily be modeled according to the difference between the relevant resulting distributions. These assumptions can be found in the table below. Two scenarios are explored: one in which no information is known about the initial heating fuel system, and another in which we assume we know the heating fuel system for each building; while that data was not readily available, is chosen to clearly illustrate the effect of increasing the semantic uncertainty about the building on analysis results.
+
+Each model is executed as part of a massively parallel scatter-gather job in the cloud with thousands of compute nodes, taking approximately 2 hours to complete all 2.3m simulations.
+
+**TODO: include assumptions table.**
 
 ### Results
 
-1. unknowns
+When the initial heating fuel source is not known for any particular building, we assume equal probabilities that it is a natural gas system or a delievered oil system. As a result, we see a highly bimodal annual cost distribution for each building, with mean and median values barely positive, but massive uncertainty in whether the actual value will be a net cost reduction or increase in the annual utility expenditure by the homeowner depending on the original fuel source.
 
-   1. heating system
-   1. basement status
-   1. attic status
+[figure]
 
-1. assumptions
-1. predictions with fuel assignment unknown
-1. predictictions with fuel assignment unknown
-1. ingest data from individual homeowners
-1. total compute time, electricity, carbon?
+To illustrate the effect of increasing the semantic certainty, we assume buildings in western Massachusetts are largely consuming delivered fuel while buildings in eastern Massachusetts are largely consuming natural gas. After doing so and re-running model the postprocessing with the cached thermal demand results, the distribution for each building's change in annual utility bill naturally collapses into a much more compact unimodal form, illustrating the clear economic incentive for oil-based homes to upgrade to a heat-pump and the clear economic disincentive to upgrade for typical natural gas furnace homes.
+
+[figure]
+
+This analysis can now naturally be paired with retrofit installation cost models (cite) homeowner willingness-to-pay models (cite), census data, and incentive equity and adoption models to evaluate the efficacy of policy decisions at the state-scale.
 
 ## Discussion
 
