@@ -1,4 +1,4 @@
-# Semantic UBEMs: Towards a Global Building Inventory
+# Semantic Stock Modeling: Towards a Global Building Inventory
 
 ## Abstract
 
