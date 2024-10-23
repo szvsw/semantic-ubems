@@ -44,6 +44,15 @@ By separating concerns, we enable the model description and computation to becom
 
 Additionally, by separating the concerns and disposing of the notions of templates, it allows the upstream semantic building stock descriptions to easily incorporate probabilistic data without concern for how the downstream analysis tasks may or may not acknolwedge it. For instance, census GIS data may easily be merged into the dataset to assign probabilities to income levels or number of occupants and used to drive downstream selection of occupancy schedule or equipment densities (cite yuqian); or computer vision models might be used to add columns representing envelope construction from street-view images with probabilities over a few categories (e.g. woodrame, masonry, steelframe) (cite); or the heating system of a home, which might be totally unknown and assumed to have uniform probability over the availability categories. It is then incumbent upon the translation and execution layers to decide how to acknowledge or ignore such uncertainties according to their needs. This naturally pairs then with incremental data availability: as new data becomes available, distributions in the upstream data are updated and downstream computations can be re-run to collapse uncertainty.
 
+The semantic stock modeling approach can be broken up into the n major stages, roughly following an extract-transform-load (ETL) pattern from data engineering:
+
+1. Acquisition of GIS datasets.
+1. Transformation of GIS datasets into cleaned semantic fields.
+1. Definition of ruleset describing transformations from semantic fields into energy modeling components.
+1. Loading of semantic fields into assembled energy models according to specified transformation rules.
+1. Execution of energy models.
+1. Data post-processing and results anlaysis.
+
 ## Case Study: Using SSM to evaluate heat-pump economic efficacy in Massachusetts
 
 Massachusetts is undertaking an ambitious statewide energy transition. As a heating-dominated climate, one of the key components of its decarbonization pathway is the electrification of heating through heat pumps, vastly reducing both site energy and source emissions. State-funded programs like MassSave provide financial incentives to homeowners to increase heat pump adoption rates. However, it is not necessarily clear that the incentive strategies, which largely do not differentiate funding levels available between any two particular homes, are being effectively deployed. To illustrate this, a model of approximately 2.5m residential homes in Massachusetts was developed with the Semantic Stock Modeling methodology. The model is used to determine the net change in dollars spent for home energy usage for each home when transitioning to a heat pump; crucially, the financial rationality of switching to a heat pump entirely depends on whether or not the home is originally heated via delivered heating oil or natural gas and the associated grid economics.
