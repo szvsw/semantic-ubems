@@ -52,7 +52,8 @@ In proposing Semantic Stock Modeling, our goal is not to immediately define a co
 1. defining semantics
 1. defining energy model components
 1. defining translation layers
-1. extensibility, e.g. going from age/(sfh|mfh) to age/(sfh|mfh)/(window type)
+1. extensibility as new data becomes available, e.g. going from age/(sfh|mfh) to age/(sfh|mfh)/(window type)
+1. collapsing uncertainty
 
 ## Case Study: Using SSM to evaluate heat-pump economic efficacy in Massachusetts
 
