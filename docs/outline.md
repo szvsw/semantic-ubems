@@ -23,6 +23,8 @@ The scope also necessarily requires integrating multiple stakeholders, none of w
 
 To address these challenges attendant to building-scale accuracy and superurban reach, we propose a new approach to representing and organizing large datasets of real-world buildings: Semantic Stock Modeling (SSM). The key paradigm shift vis-a-vis traditional UBEMs is to dispose of the notion of archetypes, i.e. the association of a prototypical, pre-defined (excluding geometry) energy model with each building; instead, we adopt a new organizational framework which consists of semantic building descriptions which are agnostic as to their computational representation and consist of high-level, human-readable features, paired with translation layers which interpret the semantics and compile energy models (or other analysis modalities) and finally the attendant computation layers which execute the models. While the lines between these two approaches is blurred in some sense - under the hood, many UBEM studies likely implement some form of description/translation/computation isolation - here, we hope to shift the vocabulary and organizational frameworks by more explicitly surfacing and decoupling these different layers. In so doing, the goal is to leverage the affordances of such isolation to enable the creation of more robust, detailed, and larger scale building stock energy models. Part of the motivation is to more rigorously define a framework for the interactions of GIS managers, building energy modelers, and research software engineers which can better facilitate the development and construction of national and global-scale building stock models while supporting different levels of data availability, uncertainty, and analysis modalities.
 
+[figure]
+
 To illustrate the utility of such a framework, a case study is conducted which models approximately 2.3 million residential buildings in the state of Massachusetts while considering a variety of fields associated with each building, such as age, single-family vs multi-family, heating systems, and more. This model is then used to analyze the economic efficacy of heat-pump adoption for homeowners and illustrate how increasing the level of semantic knowledge about heating systems drastically changes the outlook for the state of Massachusetts.
 
 In proposing Semantic Stock Modeling, our goal is not to immediately define a completed, universal standard for how building stock models should be represented, but rather to provide a new methodological framework which building stock modeling efforts can follow to better organize stakeholders and empower large scale data exchange and analysis.
@@ -42,22 +44,34 @@ The term _semantic_ is chosen to emphasize the level of detail of information st
 
 By separating concerns, we enable the model description and computation to become decoupled in separate layers, with the obvious consequence that the model compilation and computation layer can be swapped out for different performance/cost tradeoffs or different modalities of analysis altogether. For instance, a variety of approaches can be used to achieve the desired scale of results in a reasonable amount of time: on the one hand, using high horizontal capacity and whitebox physics-based models, i.e. distributed cloud computing with large volumes of parallel nodes with low-throughput per node, or on the other hand, high vertical capacity and blackbox machine-learned models of the same function, i.e. exteremely high-throughput on relatively few GPU-equipped compute nodes. Similarly, different analysis engines can be supported from the same building-stock description, from a Bayesian model of a retrofit uptake economics analysis to an hourly heat-risk analysis which is accurate at the building scale, both consuming the same source dataset. The isolation of the building stock descriptions from the analysis engines makes it (relatively) straightforward to support these different approaches simultaneously.
 
+[figure]
+
 Additionally, by separating the concerns and disposing of the notions of templates, it allows the upstream semantic building stock descriptions to easily incorporate probabilistic data without concern for how the downstream analysis tasks may or may not acknolwedge it. For instance, census GIS data may easily be merged into the dataset to assign probabilities to income levels or number of occupants and used to drive downstream selection of occupancy schedule or equipment densities (cite yuqian); or computer vision models might be used to add columns representing envelope construction from street-view images with probabilities over a few categories (e.g. woodrame, masonry, steelframe) (cite); or the heating system of a home, which might be totally unknown and assumed to have uniform probability over the availability categories. It is then incumbent upon the translation and execution layers to decide how to acknowledge or ignore such uncertainties according to their needs. This naturally pairs then with incremental data availability: as new data becomes available, distributions in the upstream data are updated and downstream computations can be re-run to collapse uncertainty.
+
+[figure]
 
 The semantic stock modeling approach can be broken up into the n major stages, roughly following an extract-transform-load (ETL) pattern from data engineering:
 
 1. Acquisition of GIS datasets.
 1. Transformation of GIS datasets into cleaned semantic fields.
 1. Definition of ruleset describing transformations from semantic fields into energy modeling components.
-1. Loading of semantic fields into assembled energy models according to specified transformation rules.
+1. Translation of semantic fields into assembled energy models according to specified transformation rules.
 1. Execution of energy models.
 1. Data post-processing and results anlaysis.
 
+[figure]
+
+todo
+
+1. manifests/more detailed specs examples
+1. leveraging local modeler knowledge etc
+1. regions of relevance (e.g. Massachusetts, portugal etc) etc
+
 ## Case Study: Using SSM to evaluate heat-pump economic efficacy in Massachusetts
 
-Massachusetts is undertaking an ambitious statewide energy transition. As a heating-dominated climate, one of the key components of its decarbonization pathway is the electrification of heating through heat pumps, vastly reducing both site energy and source emissions. State-funded programs like MassSave provide financial incentives to homeowners to increase heat pump adoption rates. However, it is not necessarily clear that the incentive strategies, which largely do not differentiate funding levels available between any two particular homes, are being effectively deployed. To illustrate this, a model of approximately 2.5m residential homes in Massachusetts was developed with the Semantic Stock Modeling methodology. The model is used to determine the net change in dollars spent for home energy usage for each home when transitioning to a heat pump; crucially, the financial rationality of switching to a heat pump entirely depends on whether or not the home is originally heated via delivered heating oil or natural gas and the associated grid economics.
+Massachusetts is undertaking an ambitious statewide energy transition. As a heating-dominated climate, one of the key components of its decarbonization pathway is the electrification of heating through heat pumps, vastly reducing both site energy and source emissions. State-funded programs like MassSave provide financial incentives to homeowners to increase heat pump adoption rates (cite). However, it is not necessarily clear that the incentive strategies, which largely do not differentiate funding levels available between any two particular homes, are being effectively deployed (cite de simone). To illustrate this, a model of approximately 2.3m residential homes in Massachusetts was developed with the SSM methodology. The model is used to determine the net change in dollars spent for home energy usage for each home when transitioning to a heat pump; crucially, the financial rationality of switching to a heat pump entirely depends on whether or not the home is originally heated via delivered heating oil or natural gas and the associated grid economics.
 
-To conduct this case study, two data sources are used: the Overture Maps Foundation Buildings database, which contains footprints and heights for every building in Massachusetts and limited building-use information, and the MassGIS Standardized Assessors' Parcel Map dataset, which contains more detailed age and parcel use data.
+To conduct this case study, two data sources are used: the Overture Maps Foundation Buildings database (cite), which contains footprints and heights for every building in Massachusetts and limited building-use information, and the MassGIS Standardized Assessors' Parcel Map dataset, which contains more detailed age and parcel use data (cite).
 
 ### Semantic Stock Model Workflow
 
@@ -164,6 +178,8 @@ yields:
 
 The energy model interpretation layer can then be represented with a straightforward component map. The component-map is used to determine how various components defined by the energy modeler will be selected and compiled in the energy model, including nested selections and value overwriting. For instance, here we see that different envelope constructions will first be selected according to whether or not the building is a single-family home or multi-family home; then the window constructions will be updated according to the age bracket as well the nested thickness of the facade construction's insulation layer. We also see that a single default space use template will be used, representing things like thermostat setpoints and schedules, while the occupant density will be directly specified according to whether or not it is a single-family or multi-family home, and the nested equipment density will be decremented according to the year built.
 
+**TODO: update the below with actual values**
+
 ```yaml
 component-map:
   envelope:
@@ -197,8 +213,6 @@ component-map:
             - 1975_to_2003: 0.4
             - post_2003: 0.8
 ```
-
-**TODO: update the above with actual values**
 
 While this is not a complete description of the building energy model used in the case study, it illustrates the conceptual utility of the SSM approach: the energy modeler only needs to define a few components, and then a ruleset for how those components should be selected, combined, or mutated when compiling the energy model for each building according to the semantic fields provided. As previously mentioned, the domain-specific language illustrated here is not meant to be a final standard, but rather, just one example of how this approach can be used to clearly communicate the connection between the different layers.
 
