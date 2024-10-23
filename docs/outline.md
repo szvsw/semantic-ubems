@@ -240,9 +240,15 @@ This analysis can now naturally be paired with retrofit installation cost models
 
 1. Future work
    1. illustrating different ways of incorporating distributional data
-   1. discussing things like representing retrofit actions or costs etc
+   1. discussing things like representing retrofit actions or costs, i.e. mutations on top of existing SSMs
    1. more rigorously defining the stock description/transformation/compilation manifests/standards.
 
 ## Conclusion
 
-lorem ipsum
+This paper introduces Semantic Stock Modeling (SSM) as a transformative approach to urban building energy modeling, addressing the limitations of traditional UBEM methods when scaling up to national and global levels. By replacing archetypal templates with semantic building descriptions that are decoupled from model translation layers, SSM overcomes challenges related to building-scale inaccuracy and the excessive modeling efforts typically required for large-scale energy modeling. This paradigm shift enables the accommodation of incomplete or probabilistic data and facilitates collaboration among diverse stakeholders—including GIS managers, energy modelers, and research software engineers - each contributing their expertise to a unified modeling process.
+
+The case study of approximately 2.3 million residential buildings in Massachusetts exemplifies the practical advantages of the SSM framework. Detailed, building-specific analyses revealed significant variations in the economic viability of heat pump adoption based on existing heating systems and regional characteristics. Homes using delivered heating oil demonstrated clear financial incentives to switch to heat pumps, while those using natural gas did not. These findings underscore the critical importance of semantic granularity in informing effective policy decisions and targeting interventions at the individual building level.
+
+By providing a scalable and adaptable framework, SSM has the potential to advance large-scale building energy modeling. It enhances modeling granularity without compromising scalability, thereby empowering stakeholders to make informed decisions that accelerate decarbonization efforts. The ability to incorporate incomplete or probabilistic data ensures that models remain robust even when data availability varies across regions or buildings or as data becomes incrementally available, making SSM particularly valuable for global applications where data quality and availability are inconsistent. The decoupling of semantic building descriptions from computational representations opens avenues for integrating new data sources and modeling techniques, enabling alternate downstream anlaysis modalities.
+
+By addressing the limitations of traditional approaches and offering a scalable, granular, and collaborative framework, SSM empowers stakeholders to make informed, data-driven decisions to accelerate the urgent task of global decarbonization.
