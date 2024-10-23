@@ -1,18 +1,17 @@
 # Semantic UBEMs: Towards a Global Building Inventory
 
-The methodology presented aims to automate the generation of urban building energy models by leveraging Geographic Information Systems (GIS) data to construct individual energy models for each building.
-This system provides a structured approach to map GIS metadata fields to energy modeling components, thereby streamlining the energy modeling process for state-, national-, and global-scale analyses.
-Unlike traditional UBEM template archetype approaches, the key innovation lies in avoiding the need for energy modelers to manually create full-factorial combinations of building templates.
-Instead, it enables them to develop a library of individual components and define mapping rules that automatically select appropriate components based on building-specific metadata.
-This approach maintains a _separation of concerns_ between the semantic information which lives in the GIS data (e.g. "woodframe construction" or "high-income household"), and the _interpretation_ of that data as it is _compiled_ into an energy model.
-It also enables flexibility by providing mechanisms for dealing with incomplete or incrementally updated data as well as probabilistic modeling.
-It also provides an easy mechanism for running different types of analysis on the same underlying GIS data, for instance running the data through a black-box simulation engine for rapid monthly energy estimation and then separately through a white-box simulation engine with an entirely different set of modeling inputs for a detailed overheating analysis.
+## Abstract
+
+Lorem ipsum
 
 ## Introduction
+
+TODO:
 
 1. Urgency of decarbonization
 1. Intersection of policy, economics, retrofitting rates: carbon, energy, and cost reduction are typically aligned, but not always - and equity is often orthogonal
 1. Quick overview of existing approaches with templates, bottom up, top-down
+1. segue into problems with traditional approaches
 
 Urban building energy modeling traditionally has relied on the law of large numbers to generate urban-scale insight: underlying archetypal energy models are assumed to be unbiased such that individual energy modeling errors at the building-scale destructively interfere to result in sufficient accuracy at the aggregated urban-scale, given a sufficient quantity of buildings within each archetypal class. On the one hand, this is a form of regularization, but on the other, it is a wasted opportunity. Although UBEMs are bottom-up, they still fail to deliver actionable information at the building scale. This leaves UBEMs with unfulfilled potential: every building is modeled, but no building is right. If compute is going to be spent, it ought to be fully leveraged to yield the most information it can. The most obvious use-case for building-scale accuracy in large urban datasets is in triaging the building stock to identify not just which _types_ of buildings are best targeted with an intervention or policy measure, but which _actual_ buildings should be targeted.
 
@@ -24,10 +23,9 @@ The scope also necessarily requires integrating multiple stakeholders, none of w
 
 To address these challenges attendant to building-scale accuracy and national-to-global reach, we propose a new approach to representing and organizing large datasets of real-world buildings: Semantic Stock Modeling (SSM). The key paradigm shift vis-a-vis traditional UBEMs is to dispose of the notion of archetypes, i.e. the association of a prototypical, pre-defined (excluding geometry) energy model with each building, and instead adopt a new organizational framework which consists of semantic building descriptions (which are agnostic as to their computational representation), paired with translation layers which interpret the semantics and compile energy models (or other modalities) and their attendant computation layers which execute models. While the lines between these two approaches is blurred in some sense - under the hood, many UBEM studies likely implement some form of description/translation/computation isolation - here, we hope to shift the vocabulary and organizational frameworks by more explicitly surfacing and decoupling these different layers. In so doing, the goal is to leverage the affordances of such isolation to enable the creation of more robust, detailed, and larger scale building stock energy models. Part of the motivation is to more rigorously define a framework for the interactions of GIS managers, building energy modelers, and research software engineers which can better organize the development and construction of national and global-scale building stock energy models which achieve ... (granularity? varying data availability? etc etc)
 
-The term _semantic_ is chosen to emphasize the level of detail of information stored in the building description layer and re-inforce its conceptual isolation from the _syntactic_ interpretation within the translation and computation layers. This enforces a stricter separation of concerns between the semantic building descriptions and the syntactic energy models. Rather than storing detailed energy-model information, which might often be numerical value assignments or other energy-model specific components/information, e.g. `Window U-Value = 2.72 W/m2K, Window SHGC=0.8` or `Infiltration rate = 0.05 m3/s/m2 exposed exterior surface area`, this layer is meant to capture coarser, human-readable semantic information about a building, e.g. `Single Pane Window` or `Leaky envelope`. The translation layer implemented by any particular modeling engine is responsible for converting these high-level fields into whatever form necessary to execute its computation. In so doing, this separation of concerns also allows for better separation of responsibilities which can better take advantage of the different skillsets of the various process stakeholders: GIS managers are clearly responsible for the building description layer, while energy modelers are clearly responsible for defining the interpretation of fields by defining components and component mappings, and research software engineers are clearly responsible for the compilation and execution of models according to the transformations and component mappings defined by the energy modelers on top of the GIS data. A clear requirement of such a framework then is concise, clear interfaces between each layer: a layer must provide manifests of what information it requires, and what information it produces.
+The term _semantic_ is chosen to emphasize the level of detail of information stored in the building description layer and re-inforce its conceptual isolation from the _syntactic_ interpretation within the translation and computation layers. This enforces a stricter separation of concerns between the semantic building descriptions and the syntactic energy models. Rather than storing detailed energy-model information, which might often be numerical value assignments or other energy-model specific components/information, e.g. `Window U-Value = 2.72 W/m2K, Window SHGC=0.8` or `Infiltration rate = 0.05 m3/s/m2 exposed exterior surface area`, this layer is meant to capture coarser, human-readable semantic information about a building, e.g. `Single Pane Window` or `Leaky envelope`. The translation layer implemented by any particular modeling engine is responsible for converting these high-level fields into whatever form necessary to execute its computation. In so doing, this separation of concerns also allows for better separation of responsibilities which can better take advantage of the different skillsets of the various process stakeholders: GIS managers are clearly responsible for the building description layer, energy modelers are clearly responsible for defining the interpretation of fields by defining atomistic components and component selection mappings, and finally research software engineers are clearly responsible for the compilation and execution of models according to the transformations and component mappings defined by the energy modelers on top of the GIS data provided by the GIS managers. An obvious requirement of such a framework then is concise, clear interfaces between each layer: a layer must provide manifests of what information it requires, and what information it produces.
 
-1. solution: decoupling buildings from energy models
-   1. energy modelers escape curse of dimensionality through simpler atomistic component definitions and rule specifications
+1. still to include for discussion:
    1. allowing for probabilistic representation over semantic features
 
 By separating concerns, we enable the model description and computation to become decoupled in separate layers, with the obvious consequence that the model compilation and computation layer can be swapped out for different performance/cost tradeoffs or different modalities of analysis altogether. For instance, a variety of approaches can be used to achieve the desired scale of results in a reasonable amount of time: on the one hand, using high horizontal capacity and whitebox physics-based models, i.e. distributed cloud computing with large volumes of parallel nodes with low-throughput per node, or on the other hand, high vertical capacity and blackbox machine-learned models of the same function, i.e. exteremely high-throughput on relatively few GPU-equipped compute nodes. Similarly, different analysis engines can be supported from the same building-stock description, from a Bayesian model of a retrofit uptake economics analysis to an hourly heat-risk analysis which is accurate at the building scale, both consuming the same source dataset. The isolation of the building stock descriptions from the analysis engines makes it (relatively) straightforward to support these different approaches simultaneously.
@@ -56,21 +54,167 @@ In proposing Semantic Stock Modeling, our goal is not to immediately define a co
 1. defining translation layers
 1. extensibility, e.g. going from age/(sfh|mfh) to age/(sfh|mfh)/(window type)
 
-## Case Study
+## Case Study: Using SSM to evaluate heat-pump economic efficacy in Massachusetts
 
-1. goal: how feasible is heat-pump adoption in MA given grid economics?
-1. data sources
-   1. overture data
-   1. state tax assessor data
-1. component descriptions
-   1. age -> windows
-   1. typology -> envelope
-   1. typology,age -> insulation level, infiltration
-   1. typology -> loads.epd/loads.lpd
+Massachusetts is undertaking an ambitious statewide energy transition. As a heating-dominated climate, one of the key components of its decarbonization pathway is the electrification of heating through heat pumps, vastly reducing both site energy and source emissions. State-funded programs like MassSave provide financial incentives to homeowners to increase heat pump adoption rates. However, it is not necessarily clear that the incentive strategies, which largely do not differentiate funding levels available between any two particular homes, are being effectively deployed. To illustrate this, a model of approximately 2.5m residential homes in Massachusetts was developed with the Semantic Stock Modeling methodology. The model is used to determine the net change in dollars spent for home energy usage for each home when transitioning to a heat pump; crucially, the financial rationality of switching to a heat pump entirely depends on whether or not the home is originally heated via delivered heating oil or natural gas and the associated grid economics.
+
+To conduct this case study, two data sources are used: the Overture Maps Foundation Buildings database, which contains footprints and heights for every building in Massachusetts and limited building-use information, and the MassGIS Standardized Assessors' Parcel Map dataset, which contains more detailed age and parcel use data.
+
+### Semantic Stock Model Workflow
+
+Following the SSM philosophy, a sequence of transformations are described to generate the high-level semantic fields which are available to the energy modeler, and guide their component definitions. First, we will specify the datasets being used.
+
+```yaml
+sources:
+  overture:
+    - geometry
+    - height
+    - primary_use
+    - secondary_use
+    - area
+  massgis:
+    - year_built
+    - parcel_use
+```
+
+Next, we specify a sequence of transformations from the raw dataset to generate the semantic fields.
+
+```yaml
+computed:
+  divide:
+    source: height
+    divisor: 3.5
+    round: up
+    output: num_floors
+
+  concatenate:
+    separator: ": "
+    columns:
+      - primary_use:
+          source: overture
+      - secondary_use:
+          source: overture
+      - parcel_use:
+          source: massgis
+    output: uses
+
+  classify:
+    source: uses
+    targets:
+      - residential single-family
+      - residential multi-family
+      - non-residential
+    output: use_class
+
+  group:
+    source: year_built
+    breakpoints:
+      values:
+        - 1975
+        - 2003
+      before: pre_
+      between: _to_
+      after: post_
+    output: age_bracket
+```
+
+Notice that the classification of the raw `uses` field into coarse categories is left as an implementation detail, which could be easily implemented with anything from regular expression pattern matching to traditional NLP techniques, embedding vector search, or LLM-driven word-association.
+
+Next we attach a filter, since we are only want to consider residential buildings with an area less than or equal to X sqm:
+
+```yaml
+filters:
+  op: and
+  conditions:
+    - source: use_class
+      condition:
+        starts-with: residential
+    - source: area
+      condition:
+        le: x
+```
+
+Finally, we define which fields are available for use by the energy modeler:
+
+```yaml
+yields:
+  area:
+    min: 0
+    max: null
+    units: sqft
+  num_floors:
+    min: 1
+    max: null
+    type: integer
+    units: floors
+  age:
+    min: 1670
+    max: 2024
+    type: integer
+    units: years
+  age_bracket:
+    categories:
+      - pre_1975
+      - 1975_to_2003
+      - post_2003
+  use_class:
+    categories:
+      - residential multi-family
+      - residential single-family
+```
+
+The energy model interpretation layer can then be represented with a straightforward component map. The component-map is used to determine how various components defined by the energy modeler will be selected and compiled in the energy model, including nested selections and value overwriting. For instance, here we see that different envelope constructions will first be selected according to whether or not the building is a single-family home or multi-family home; then the window constructions will be updated according to the age bracket as well the nested thickness of the facade construction's insulation layer. We also see that a single default space use template will be used, representing things like thermostat setpoints and schedules, while the occupant density will be directly specified according to whether or not it is a single-family or multi-family home, and the nested equipment density will be decremented according to the year built.
+
+```yaml
+component-map:
+  envelope:
+    source: use_class
+    window-construction:
+      source: age_bracket
+    facade-construction:
+      insulation-layer:
+        thickness:
+          source: age_bracket
+    infiltration:
+      source: age_bracket
+
+  space_use:
+    source: default
+    occupants:
+      density:
+        assign:
+          source: use_class
+          value:
+            - residential single-family: 0.xx
+            - residential multi-family: 0.xx
+    loads:
+      source: use_class
+      epd:
+        op:
+          source: age_bracket
+          type: subtract
+          value:
+            - pre_1975: 0
+            - 1975_to_2003: 0.4
+            - post_2003: 0.8
+```
+
+**TODO: update the above with actual values**
+
+While this is not a complete description of the building energy model used in the case study, it illustrates the conceptual utility of the SSM approach: the energy modeler only needs to define a few components, and then a ruleset for how those components should be selected, combined, or mutated when compiling the energy model for each building according to the semantic fields provided. As previously mentioned, the domain-specific language illustrated here is not meant to be a final standard, but rather, just one example of how this approach can be used to clearly communicate the connection between the different layers.
+
+This information in conjunction with the base datasets is sufficient to construct the EnergyPlus model for each building and execute the simulations as a massively parallel job in the cloud with thousands of compute nodes.
+
+\_\_TODO: discuss
+
+### Results
+
 1. unknowns
+
    1. heating system
    1. basement status
    1. attic status
+
 1. assumptions
 1. predictions with fuel assignment unknown
 1. predictictions with fuel assignment unknown
@@ -81,6 +225,7 @@ In proposing Semantic Stock Modeling, our goal is not to immediately define a co
 
 1. Future work
    1. illustrating different ways of incorporating distributional data
+   1. discussing things like representing retrofit actions or costs etc
    1. more rigorously defining the stock description/transformation/compilation manifests/standards.
 
 ## Conclusion
