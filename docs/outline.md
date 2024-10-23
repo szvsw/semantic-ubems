@@ -222,7 +222,7 @@ This information in conjunction with the base datasets is sufficient to construc
 1. ingest data from individual homeowners
 1. total compute time, electricity, carbon?
 
-# Discussion
+## Discussion
 
 1. Future work
    1. illustrating different ways of incorporating distributional data
@@ -230,3 +230,5 @@ This information in conjunction with the base datasets is sufficient to construc
    1. more rigorously defining the stock description/transformation/compilation manifests/standards.
 
 ## Conclusion
+
+lorem ipsum
